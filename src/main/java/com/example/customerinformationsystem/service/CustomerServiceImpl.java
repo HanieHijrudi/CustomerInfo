@@ -117,7 +117,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer updateCustomerById(Long id, Customer customer) {
         Optional<Customer> findCustomer = customerRepository.findById(id);
-        if (!findCustomer.isPresent()) {
+        if (findCustomer.isEmpty()) {
             throw new CustomerNotFoundException("Customer with ID " + id + " not found");
         }
         customer.setId(id);

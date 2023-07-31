@@ -2,6 +2,9 @@ package com.example.customerinformationsystem.service;
 
 import com.example.customerinformationsystem.ProgressTracker;
 import com.example.customerinformationsystem.entity.Customer;
+import com.example.customerinformationsystem.error.CustomerDetailsInvalidException;
+import com.example.customerinformationsystem.error.CustomerNotFoundException;
+import com.example.customerinformationsystem.error.NoCustomersToSaveException;
 import com.example.customerinformationsystem.repository.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +31,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void saveCustomers(List<Customer> customers) {
         int totalCustomers = customers.size();
+
+        if(totalCustomers == 0){
+            throw new NoCustomersToSaveException("No customers to save!!!");
+        }
+
         progressTracker.setTotalCustomers(totalCustomers);
 
         for (Customer customer : customers) {
@@ -65,23 +73,44 @@ public class CustomerServiceImpl implements CustomerService {
         } */
     @Override
     public Customer saveCustomer(Customer customer) {
+
+        if(customer==null || customer.getEmail()==null || customer.getPassword()==null || customer.getFirstName()==null||
+            customer.getLastName()==null || customer.getUserName()==null){
+            throw new CustomerDetailsInvalidException(("Customer details must not be empty"));
+        }
+
         return customerRepository.save(customer);
     }
 
     @Override
-    public List<Customer> getCustomers() {
-        return customerRepository.findAll();
+    public List<Customer> getCustomers()
+            throws CustomerNotFoundException{
+        List<Customer> customers = customerRepository.findAll();
+
+        if(customers.isEmpty()){
+            throw new CustomerNotFoundException("No customers found in the database.");
+        }
+        return customers;
     }
 
     @Override
-    public Optional<Customer> getCustomerById(Long id) {
-        return customerRepository.findById(id);
+    public Optional<Customer> getCustomerById(Long id){
+        Optional<Customer> customer = customerRepository.findById(id);
+
+        if(customer.isEmpty()){
+            throw new CustomerNotFoundException("Customer with ID " + id + " not found");
+        }
+        return customer;
+//        return customer.orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found"));
     }
 
     @Override
     public String deleteCustomerById(Long id) {
+        if (!customerRepository.existsById(id)){
+            throw new CustomerNotFoundException("Customer with ID " + id + " not found");
+        }
         customerRepository.deleteById(id);
-        return "Customer information deleted successfully!";
+        return "Customer with ID " + id + " deleted successfully!";
     }
 
 
@@ -89,7 +118,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer updateCustomerById(Long id, Customer customer) {
         Optional<Customer> findCustomer = customerRepository.findById(id);
         if (!findCustomer.isPresent()) {
-            throw new RuntimeException();
+            throw new CustomerNotFoundException("Customer with ID " + id + " not found");
         }
         customer.setId(id);
         return customerRepository.save(customer);
@@ -97,6 +126,11 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Customer> getCustomersByName(String firstName) {
-        return customerRepository.findByFirstNameIgnoreCase(firstName);
+        List<Customer> customers = customerRepository.findByFirstNameIgnoreCase(firstName);
+
+        if(customers.isEmpty()){
+            throw new CustomerNotFoundException(("No customers found with name: " + firstName));
+        }
+        return customers;
     }
 }

@@ -1,22 +1,25 @@
 package com.example.customerinformationsystem.service;
 
 import com.example.customerinformationsystem.entity.Customer;
+import com.example.customerinformationsystem.error.CustomerDetailsInvalidException;
+import com.example.customerinformationsystem.error.CustomerNotFoundException;
+import com.example.customerinformationsystem.error.NoCustomersToSaveException;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CustomerService {
-    Customer saveCustomer(Customer customer);
+    Customer saveCustomer(Customer customer)throws CustomerDetailsInvalidException;
 
-    List<Customer> getCustomers();
+    List<Customer> getCustomers() throws CustomerNotFoundException;
 
-    Optional<Customer> getCustomerById(Long id);
+    Optional<Customer> getCustomerById(Long id) throws CustomerNotFoundException;
 
-    String deleteCustomerById(Long id);
+    String deleteCustomerById(Long id) throws CustomerNotFoundException;
 
-    void saveCustomers(List<Customer> customers);
+    void saveCustomers(List<Customer> customers) throws NoCustomersToSaveException;
 
-    Customer updateCustomerById(Long id, Customer customer);
+    Customer updateCustomerById(Long id, Customer customer) throws CustomerNotFoundException;
 
-    List<Customer> getCustomersByName(String firstName);
+    List<Customer> getCustomersByName(String firstName) throws CustomerNotFoundException;
 }

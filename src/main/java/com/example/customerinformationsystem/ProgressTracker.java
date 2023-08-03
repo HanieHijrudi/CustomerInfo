@@ -15,8 +15,13 @@ public class ProgressTracker {
         currentProgress++;
     }
     public int getProgressPercentage() {
+        if (totalCustomers == 0) {
+            return 0;
+        }
         return (currentProgress * 100) / totalCustomers;
     }
+
+
 /*
     public void setTotalCustomers(int totalCustomers) {
         this.totalCustomers = totalCustomers;

@@ -17,35 +17,31 @@ public class ProgressEndpoint {
 
     @ReadOperation
     public Map<String, Object> getProgress() {
-        Map<String, Object> respone = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
 
-/*        int currentProgress = progressTracker.getCurrentProgress();
+        int currentProgress = progressTracker.getCurrentProgress();
         int totalCustomers = progressTracker.getTotalCustomers();
-        int progressPercentage = progressTracker.getProgressPercentage();
+        int progressPercentage = 0;
 
-        respone.put("progress", currentProgress);
-        respone.put("totalCustomer", totalCustomers);
+        if(totalCustomers !=0){
+            progressPercentage= progressTracker.getProgressPercentage();
+        }
+
+         response.put("progress", currentProgress);
+        response.put("totalCustomer", totalCustomers);
+
 
         if(progressPercentage == 0){
-            respone.put("progressPercentage", null);
-            respone.put("message", "No available progress at the moment");
+            response.put("progressPercentage", 0);
+            response.put("message", "No available progress at the moment");
         } else {
-            respone.put("progressPercentage", progressPercentage);
+            response.put("progressPercentage", progressPercentage);
+            if (progressPercentage == 100){
+                progressTracker.setCurrentProgress(0);
+            }
         }
-        return respone;*/
 
-
-        respone.put("progress", progressTracker.getCurrentProgress());
-        respone.put("totalCustomer", progressTracker.getTotalCustomers());
-        respone.put("progressPercentage", progressTracker.getProgressPercentage());
-        return respone;
+        return response;
     }
 
 }
-
-/*    private final ProgressTracker progressTracker;
-
-    @Autowired
-    public ProgressEndpoint(ProgressTracker progressTracker) {
-        this.progressTracker = progressTracker;
-    }*/

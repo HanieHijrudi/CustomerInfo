@@ -89,7 +89,6 @@ public class CustomerServiceImpl implements CustomerService {
         return "Customer with ID " + id + " deleted successfully!";
     }
 
-
     @Override
     public Customer updateCustomerById(Long id, Customer customer) {
         Optional<Customer> findCustomer = customerRepository.findById(id);

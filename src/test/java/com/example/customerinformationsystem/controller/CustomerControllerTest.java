@@ -175,13 +175,13 @@ class CustomerControllerTest {
 
     @Test
     public void testDeleteCustomerById_ValidCustomer() throws CustomerNotFoundException {
-        when(customerService.deleteCustomerById(1L)).thenReturn("Customer with ID 1 deleted seccessfully.");
+        when(customerService.deleteCustomerById(1L)).thenReturn("Customer with ID 1 deleted successfully.");
 
         String deleteMessage = customerController.deleteCustomerById(1L);
 
         verify(customerService).deleteCustomerById(1L);
 
-        assertEquals("Customer with ID 1 deleted seccessfully.", deleteMessage);
+        assertEquals("Customer with ID 1 deleted successfully.", deleteMessage);
     }
 
     @Test
@@ -207,7 +207,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    public void testUpdateCustomerById_CostomerNotFoundException() throws CustomerNotFoundException {
+    public void testUpdateCustomerById_CustomerNotFoundException() throws CustomerNotFoundException {
 
         when(customerService.updateCustomerById(1L, customer1)).thenThrow(CustomerNotFoundException.class);
 

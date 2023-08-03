@@ -24,7 +24,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private ProgressTracker progressTracker;
 
-
     @Autowired
     private CustomerRepository customerRepository;
 
@@ -32,50 +31,29 @@ public class CustomerServiceImpl implements CustomerService {
     public void saveCustomers(List<Customer> customers) {
         int totalCustomers = customers.size();
 
-        if(totalCustomers == 0){
+        if (totalCustomers == 0) {
             throw new NoCustomersToSaveException("No customers to save!!!");
         }
 
         progressTracker.setTotalCustomers(totalCustomers);
+        int currentProgress = 0;
 
         for (Customer customer : customers) {
             customerRepository.save(customer);
 
+            currentProgress++;
             progressTracker.incrementProgress();
 
             int progressPercentage = progressTracker.getProgressPercentage();
-            int currentProgress = progressTracker.getCurrentProgress();
             LOGGER.info("Saving customer: {} of {} ({}% complete)", currentProgress, totalCustomers, progressPercentage);
         }
     }
 
-
-    /*    @Autowired
-        public void CustomerService(ProgressTracker progressTracker, CustomerRepository customerRepository) {
-            this.progressTracker = progressTracker;
-            this.customerRepository = customerRepository;
-
-
-        @Override
-        public void saveCustomers(List<Customer> customers) {
-            int totalCustomers = customers.size();
-            progressTracker.setTotalCustomers(totalCustomers);
-
-            for (Customer customer : customers){
-                customerRepository.save(customer);
-
-                progressTracker.incrementProgress();
-
-                int currentProgress = progressTracker.getProgressPercentage();
-                int currentCustomer = progressTracker.getCurrentProgress();
-                LOGGER.info("Saving customer: {} of {} ({}% complete)", currentCustomer, totalCustomers, currentProgress);
-            }
-        } */
     @Override
     public Customer saveCustomer(Customer customer) {
 
-        if(customer==null || customer.getEmail()==null || customer.getPassword()==null || customer.getFirstName()==null||
-            customer.getLastName()==null || customer.getUserName()==null){
+        if (customer == null || customer.getEmail() == null || customer.getPassword() == null || customer.getFirstName() == null ||
+                customer.getLastName() == null || customer.getUserName() == null) {
             throw new CustomerDetailsInvalidException(("Customer details must not be empty"));
         }
 
@@ -83,30 +61,28 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Customer> getCustomers()
-            throws CustomerNotFoundException{
+    public List<Customer> getCustomers() {
         List<Customer> customers = customerRepository.findAll();
 
-        if(customers.isEmpty()){
+        if (customers.isEmpty()) {
             throw new CustomerNotFoundException("No customers found in the database.");
         }
         return customers;
     }
 
     @Override
-    public Optional<Customer> getCustomerById(Long id){
+    public Optional<Customer> getCustomerById(Long id) {
         Optional<Customer> customer = customerRepository.findById(id);
 
-        if(customer.isEmpty()){
+        if (customer.isEmpty()) {
             throw new CustomerNotFoundException("Customer with ID " + id + " not found");
         }
         return customer;
-//        return customer.orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found"));
     }
 
     @Override
     public String deleteCustomerById(Long id) {
-        if (!customerRepository.existsById(id)){
+        if (!customerRepository.existsById(id)) {
             throw new CustomerNotFoundException("Customer with ID " + id + " not found");
         }
         customerRepository.deleteById(id);
@@ -120,6 +96,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (findCustomer.isEmpty()) {
             throw new CustomerNotFoundException("Customer with ID " + id + " not found");
         }
+
+        if (customer == null || customer.getEmail() == null || customer.getPassword() == null || customer.getFirstName() == null ||
+                customer.getLastName() == null || customer.getUserName() == null) {
+            throw new CustomerDetailsInvalidException("Customer details must not be empty");
+        }
+
         customer.setId(id);
         return customerRepository.save(customer);
     }
@@ -128,7 +110,7 @@ public class CustomerServiceImpl implements CustomerService {
     public List<Customer> getCustomersByName(String firstName) {
         List<Customer> customers = customerRepository.findByFirstNameIgnoreCase(firstName);
 
-        if(customers.isEmpty()){
+        if (customers.isEmpty()) {
             throw new CustomerNotFoundException(("No customers found with name: " + firstName));
         }
         return customers;
